@@ -17,5 +17,17 @@ class MyTheme {
         unselectedIconTheme: IconThemeData(size: 30, color: colorGrey),
         backgroundColor: Colors.transparent,
         elevation: 0,
-      ));
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(18),
+                  topRight: Radius.circular(18)))),
+      textTheme: const TextTheme(
+          headline5: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+          headline6: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          )));
 }

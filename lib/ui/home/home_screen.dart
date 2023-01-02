@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app_flutter/ui/home/settings/settings_tab.dart';
+import 'package:todo_app_flutter/ui/home/taskList/add_task.dart';
 import 'package:todo_app_flutter/ui/home/taskList/task_list_tab.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,7 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         shape: StadiumBorder(side: BorderSide(color: Colors.white, width: 4)),
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          showAddTaskBottomSheet();
+        },
       ),
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
@@ -45,4 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   var tabs = [TaskListTab(), SettingsTab()];
+
+  void showAddTaskBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        builder: (buildContext) {
+          return AddTask();
+        });
+  }
 }
