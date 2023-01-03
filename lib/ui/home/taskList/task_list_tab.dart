@@ -21,6 +21,8 @@ class _TaskListTabState extends State<TaskListTab> {
     // loadTask();
   }
 
+  var selectedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     // if(allTasks.isEmpty){
@@ -32,10 +34,18 @@ class _TaskListTabState extends State<TaskListTab> {
           CalendarTimeline(
             shrink: true,
             showYears: false,
-            initialDate: DateTime.now(),
+            initialDate: selectedDate,
             firstDate: DateTime.now().subtract(Duration(days: 30)),
             lastDate: DateTime.now().add(Duration(days: 365)),
-            onDateSelected: (date) => print(date),
+            onDateSelected: (date) {
+              if (date == null) {
+                return;
+              }
+
+              setState(() {
+                selectedDate = date;
+              });
+            },
             leftMargin: 20,
             monthColor: Colors.black,
             dayColor: Colors.black,
@@ -80,7 +90,7 @@ class _TaskListTabState extends State<TaskListTab> {
                   ///another solution - realtime db
 
                   StreamBuilder<QuerySnapshot<Task>>(
-            stream: MyDatabase.getTasksRealTimeUpdate(),
+                    stream: MyDatabase.getTasksRealTimeUpdate(selectedDate),
             builder: (buildContext, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -120,3 +130,21 @@ class _TaskListTabState extends State<TaskListTab> {
 //
 // }
 }
+
+// class TaskProvider extends ChangeNotifier{
+//   List<Task> tasks;
+//   void loadTaskFromData(){
+//     tasks = MyDatabase.getTasks();
+//   }
+//
+//   void addTask(){
+//     MyDatabase.insertTask(task);
+//     notifyListeners();
+//
+//   }
+//
+//   void deleteTask(){
+//     MyDatabase.deleteTask(task);
+//   }
+//
+// }
