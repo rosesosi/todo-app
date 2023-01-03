@@ -20,4 +20,25 @@ class MyDatabase {
     task.id = doc.id;
     return doc.set(task);
   }
+
+  // future 3shan mstnya result 3amla await
+  static Future<List<Task>> getTasks() async {
+    var querySnapshot = await getTasksCollection().get();
+    // a7wl mn list of querysnapshot l list of task ast5dm map
+    var tasksList = querySnapshot.docs.map((doc) => doc.data()).toList();
+    return tasksList;
+  }
+
+  static Future<QuerySnapshot<Task>> getTasksFuture() {
+    return getTasksCollection().get();
+  }
+
+  static Stream<QuerySnapshot<Task>> getTasksRealTimeUpdate() {
+    return getTasksCollection().snapshots();
+  }
+
+  static Future<void> deleteTask(Task task) {
+    var taskDoc = getTasksCollection().doc(task.id);
+    return taskDoc.delete();
+  }
 }
