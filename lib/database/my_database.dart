@@ -44,12 +44,34 @@ class MyDatabase {
   static Stream<QuerySnapshot<Task>> getTasksRealTimeUpdate(DateTime dateTime) {
     return getTasksCollection()
         .where('dateTime',
-            isEqualTo: dateTime.extractDateOnly().millisecondsSinceEpoch)
+        isEqualTo: dateTime
+            .extractDateOnly()
+            .millisecondsSinceEpoch)
         .snapshots();
   }
 
   static Future<void> deleteTask(Task task) {
     var taskDoc = getTasksCollection().doc(task.id);
     return taskDoc.delete();
+  }
+
+  static void markAsDone(Task task) {
+    getTasksCollection()
+        .doc(task.id)
+        .update({
+      'isDone': task.isDone ? false : true
+    });
+  }
+
+  static Future<void> editTaskDetails(Task task) {
+    var taskCollection = getTasksCollection();
+    var taskItem = taskCollection.doc(task.id);
+    return taskItem.update({
+      'title': task.title,
+      'description': task.description,
+      'dateTime': task.dateTime
+          .extractDateOnly()
+          .millisecondsSinceEpoch
+    });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:todo_app_flutter/ui/home/settings/settings_tab.dart';
 import 'package:todo_app_flutter/ui/home/taskList/add_task.dart';
 import 'package:todo_app_flutter/ui/home/taskList/task_list_tab.dart';
@@ -17,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ToDo List'),
+        title: Text(AppLocalizations.of(context)!.projectName),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(

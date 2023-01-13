@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app_flutter/database/my_database.dart';
 import 'package:todo_app_flutter/database/task.dart';
+import 'package:todo_app_flutter/provider/settingsProvider.dart';
 import 'package:todo_app_flutter/utils/date_utils.dart';
 import 'package:todo_app_flutter/utils/dialog_utils.dart';
 
@@ -16,6 +19,7 @@ class _AddTaskState extends State<AddTask> {
 
   @override
   Widget build(BuildContext context) {
+    var settingProvider = Provider.of<SettingsProvider>(context);
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.all(15),
@@ -25,11 +29,15 @@ class _AddTaskState extends State<AddTask> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Add New Task',
+                AppLocalizations.of(context)!.addTask,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headline5,
               ),
               TextFormField(
+                style: TextStyle(
+                    color: settingProvider.isDarkMode()
+                        ? Colors.white
+                        : Colors.black),
                 controller: titleControler,
                 validator: (input) {
                   if (input == null || input.trim().isEmpty) {
@@ -38,13 +46,20 @@ class _AddTaskState extends State<AddTask> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  labelText: 'Title',
-                ),
+                    labelText: AppLocalizations.of(context)!.title,
+                    labelStyle: TextStyle(
+                        color: settingProvider.isDarkMode()
+                            ? Colors.white
+                            : Colors.black)),
               ),
               SizedBox(
                 height: 10,
               ),
               TextFormField(
+                style: TextStyle(
+                    color: settingProvider.isDarkMode()
+                        ? Colors.white
+                        : Colors.black),
                 controller: descriptionController,
                 validator: (input) {
                   if (input == null || input.trim().isEmpty) {
@@ -55,14 +70,17 @@ class _AddTaskState extends State<AddTask> {
                 minLines: 4,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  labelText: 'description',
-                ),
+                    labelText: AppLocalizations.of(context)!.description,
+                    labelStyle: TextStyle(
+                        color: settingProvider.isDarkMode()
+                            ? Colors.white
+                            : Colors.black)),
               ),
               SizedBox(
                 height: 20,
               ),
               Text(
-                'Select Date',
+                AppLocalizations.of(context)!.selectDate,
                 style: Theme.of(context).textTheme.headline6,
               ),
               InkWell(
@@ -85,7 +103,7 @@ class _AddTaskState extends State<AddTask> {
                   onPressed: () {
                     insertTask();
                   },
-                  child: Text('Submit')),
+                  child: Text(AppLocalizations.of(context)!.addButton)),
             ],
           ),
         ),
@@ -118,22 +136,26 @@ class _AddTaskState extends State<AddTask> {
         title: titleControler.text,
         description: descriptionController.text,
         dateTime: selectedDate);
-    DialogUtils.showProgressDialog(context, 'Loading...', isDismissible: false);
+    DialogUtils.showProgressDialog(
+        context, AppLocalizations.of(context)!.loading,
+        isDismissible: false);
     try {
       await MyDatabase.insertTask(task);
       DialogUtils.hideDialog(context);
-      DialogUtils.showMessage(context, 'Task inserted Successfuly',
-          posActionTitle: 'Ok', posAction: () {
+      DialogUtils.showMessage(
+          context, AppLocalizations.of(context)!.successAddMessage,
+          posActionTitle: AppLocalizations.of(context)!.ok, posAction: () {
         Navigator.pop(context);
       }, isDismissible: false);
     } catch (e) {
       DialogUtils.hideDialog(context);
-      DialogUtils.showMessage(context, 'Error inserted task',
-          posActionTitle: 'Try Again',
+      DialogUtils.showMessage(
+          context, AppLocalizations.of(context)!.errorMessage,
+          posActionTitle: AppLocalizations.of(context)!.tryAgain,
           posAction: () {
             insertTask();
           },
-          negActionTitle: 'cancel',
+          negActionTitle: AppLocalizations.of(context)!.cancel,
           negAction: () {
             Navigator.pop(context);
           },

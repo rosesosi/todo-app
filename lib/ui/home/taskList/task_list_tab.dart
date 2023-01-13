@@ -1,9 +1,11 @@
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app_flutter/database/my_database.dart';
 import 'package:todo_app_flutter/database/task.dart';
+import 'package:todo_app_flutter/provider/settingsProvider.dart';
 import 'package:todo_app_flutter/ui/home/taskList/task_item.dart';
 
 class TaskListTab extends StatefulWidget {
@@ -14,12 +16,12 @@ class TaskListTab extends StatefulWidget {
 class _TaskListTabState extends State<TaskListTab> {
   // List<Task> allTasks =[];
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // loadTask();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   // loadTask();
+  // }
 
   var selectedDate = DateTime.now();
 
@@ -28,6 +30,7 @@ class _TaskListTabState extends State<TaskListTab> {
     // if(allTasks.isEmpty){
     //   loadTask();
     // }
+    var settingProvider = Provider.of<SettingsProvider>(context);
     return Container(
       child: Column(
         children: [
@@ -47,8 +50,10 @@ class _TaskListTabState extends State<TaskListTab> {
               });
             },
             leftMargin: 20,
-            monthColor: Colors.black,
-            dayColor: Colors.black,
+            monthColor:
+                settingProvider.isDarkMode() ? Colors.white : Colors.black,
+            dayColor:
+                settingProvider.isDarkMode() ? Colors.white : Colors.black,
             dayNameColor: const Color(0xFF333A47),
             activeDayColor: Theme.of(context).primaryColor,
             activeBackgroundDayColor: Colors.white,
@@ -61,9 +66,9 @@ class _TaskListTabState extends State<TaskListTab> {
           ),
           Expanded(
               child:
-                  // allTasks.isEmpty?const Center(child: CircularProgressIndicator()):
-                  /// future reload only one after add or delete make rfresh
-                  //     FutureBuilder<List<Task>>(builder: (buildContext , snapshot){
+              // allTasks.isEmpty?const Center(child: CircularProgressIndicator()):
+              /// future reload only one after add or delete make rfresh
+              //     FutureBuilder<List<Task>>(builder: (buildContext , snapshot){
                   //       //return widget
                   //       if(snapshot.connectionState == ConnectionState.waiting){
                   //         // future fun hasn't completed yet
@@ -74,7 +79,7 @@ class _TaskListTabState extends State<TaskListTab> {
                   //           children: [
                   //             Text('Error loading tasks ,' 'try again later'),
                   //
-                  //             //Todo : show try again button y3ml reload
+                  //
                   //           ],
                   //         ),);
                   //       }
@@ -87,34 +92,34 @@ class _TaskListTabState extends State<TaskListTab> {
                   //       );
                   //     } , future: MyDatabase.getTasks() ,)
 
-                  ///another solution - realtime db
+              ///another solution - realtime db
 
-                  StreamBuilder<QuerySnapshot<Task>>(
-                    stream: MyDatabase.getTasksRealTimeUpdate(selectedDate),
-            builder: (buildContext, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Column(
-                    children: [
-                      Text('Error loading Tasks ,' 'try again later'),
+              StreamBuilder<QuerySnapshot<Task>>(
+                stream: MyDatabase.getTasksRealTimeUpdate(selectedDate),
+                builder: (buildContext, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        children: [
+                      Text(AppLocalizations.of(context)!.errorloadingMessagee),
                     ],
-                  ),
-                );
-              }
-              var tasks = snapshot.data?.docs.map((doc) => doc.data()).toList();
-              return ListView.builder(
-                itemBuilder: (_, index) {
-                  return TaskItem(tasks![index]);
+                      ),
+                    );
+                  }
+                  var tasks = snapshot.data?.docs.map((doc) => doc.data()).toList();
+                  return ListView.builder(
+                    itemBuilder: (_, index) {
+                      return TaskItem(tasks![index]);
+                    },
+                    itemCount: tasks?.length ?? 0,
+                  );
                 },
-                itemCount: tasks?.length ?? 0,
-              );
-            },
-          )),
+              )),
         ],
       ),
     );
