@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsProvider extends ChangeNotifier {
   ThemeMode currentTheme = ThemeMode.light;
   String currentLang = 'en';
 
   // observable pattern
-  void changeTheme(ThemeMode newMode) {
+  void changeTheme(ThemeMode newMode) async {
+    final prefsTheme = await SharedPreferences.getInstance();
+    if (newMode == currentTheme) {
+      return;
+    }
     currentTheme = newMode;
+    prefsTheme.setString(
+        "theme", (currentTheme == ThemeMode.dark) ? 'dark' : 'light');
     notifyListeners();
   }
-
-  // String getMainBackgroundImage() {
-  //   return currentTheme == ThemeMode.light
-  //       ? 'assets/images/default_bg.png'
-  //       : 'assets/images/dark_bg.png';
-  // }
 
   bool isDarkMode() {
     return currentTheme == ThemeMode.dark;
   }
 
-  void changeLocale(String newLocale) {
+  void changeLocale(String newLocale) async {
+    final prefsLocal = await SharedPreferences.getInstance();
+    if (newLocale == currentLang) {
+      return;
+    }
     currentLang = newLocale;
+    await prefsLocal.setString("local", currentLang);
     notifyListeners();
   }
 }
